@@ -101,6 +101,53 @@
     "ホ": "ポ"
   };
 
+  var fullWidthDashPattern = /[‐‑‒–—―−－]/;
+  var fullWidthAlphaNumericPattern = /[Ａ-Ｚａ-ｚ０-９]/;
+  var halfWidthKanaPattern = /[ｦ-ﾟ]/;
+  var halfWidthKanaMarkPattern = /[ﾞﾟ]/;
+
+  function isFullWidthAlphaNumeric(char) {
+    return fullWidthAlphaNumericPattern.test(char);
+  }
+
+  function isHalfWidthKana(char) {
+    return halfWidthKanaPattern.test(char);
+  }
+
+  function hasHalfWidthKanaBefore(value, index) {
+    var previous = value.charAt(index - 1);
+
+    if (halfWidthKanaMarkPattern.test(previous)) {
+      previous = value.charAt(index - 2);
+    }
+
+    return isHalfWidthKana(previous);
+  }
+
+  function hasHalfWidthKanaAfter(value, index) {
+    return isHalfWidthKana(value.charAt(index + 1));
+  }
+
+  function normalizeContextualPunctuation(value) {
+    var output = "";
+
+    for (var i = 0; i < value.length; i += 1) {
+      var char = value.charAt(i);
+      var previous = value.charAt(i - 1);
+      var next = value.charAt(i + 1);
+
+      if (fullWidthDashPattern.test(char) && isFullWidthAlphaNumeric(previous) && isFullWidthAlphaNumeric(next)) {
+        output += "-";
+      } else if (char === "-" && hasHalfWidthKanaBefore(value, i) && hasHalfWidthKanaAfter(value, i)) {
+        output += "ー";
+      } else {
+        output += char;
+      }
+    }
+
+    return output;
+  }
+
   function normalizeAscii(value) {
     return value.replace(/[！-～]/g, function (char) {
       return String.fromCharCode(char.charCodeAt(0) - 0xfee0);
@@ -130,7 +177,7 @@
   }
 
   function convertText(value) {
-    return normalizeKana(normalizeAscii(value));
+    return normalizeKana(normalizeAscii(normalizeContextualPunctuation(value)));
   }
 
   var api = {
