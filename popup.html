@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ZenHan Corrector</title>
+    <link rel="stylesheet" href="src/popup.css">
+  </head>
+  <body>
+    <main class="popup">
+      <header class="header">
+        <h1>ZenHan Corrector</h1>
+        <label class="switch" aria-label="変換を有効化">
+          <input id="enabled" type="checkbox">
+          <span class="track">
+            <span class="thumb"></span>
+          </span>
+        </label>
+      </header>
+      <p id="status" class="status">読み込み中</p>
+      <p class="shortcut">Alt+Shift+Z でも切り替え</p>
+      <button id="refresh" type="button">このページを再変換</button>
+    </main>
+    <script src="src/popup.js"></script>
+  </body>
+</html>
